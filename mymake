@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+# Lenio: small helper script to build on Darwin
+
+OS=$(uname -s)
+if [ "$OS" = Darwin ]; then
+  # assumes using homebrew's openssl, which is still 1.0.x as of May 2019
+  OPTFLAGS=-I/usr/local/opt/openssl/include LDFLAGS=-L/usr/local/opt/openssl/lib make "$@"
+else
+  make "$@"
+fi

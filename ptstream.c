@@ -208,7 +208,10 @@ int check_cert_names(X509 *cert, char *peer_host) {
 		for (i = 0; i < san_count; i++) {
 			gn = sk_GENERAL_NAME_value(gen_names, i);
 			if (gn->type == GEN_DNS && !(peer_host_is_ipv4 || peer_host_is_ipv6)) {
-				if (check_cert_valid_host((char*)ASN1_STRING_get0_data(gn->d.ia5), peer_host)) {
+                                // lenio: openssl 1.0 not supporting
+                                // ASN1_STRING_get0_data so use
+                                // ASN1_STRING_data
+				if (check_cert_valid_host((char*)ASN1_STRING_data(gn->d.ia5), peer_host)) {
 					return 1;
 				}
 			} else if (gn->type == GEN_IPADD) {
@@ -254,7 +257,9 @@ int stream_enable_ssl(PTSTREAM *pts, const char *proxy_arg) {
 	/* Initialise the connection */
 	SSLeay_add_ssl_algorithms();
 	if (args_info.enforcetls1_flag) {
-		meth = TLS_client_method();
+		//meth = TLS_client_method();
+		fprintf(stderr,"Lenio: -L flag is not supported\n");
+		exit(1);
 	} else {
 		meth = SSLv23_client_method();
 	}
